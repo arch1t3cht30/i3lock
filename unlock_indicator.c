@@ -79,6 +79,8 @@ extern xcb_screen_t *screen;
  * Local variables.
  ******************************************************************************/
 
+static float rgb16[3];
+
 static float ring_colorf[3];
 static float type_colorf[3];
 static float ring_alphaf;
@@ -92,12 +94,20 @@ unlock_state_t unlock_state;
 auth_state_t auth_state;
 
 void init_colors(void) {
-    char strgroups[3][3] = {{ring_color[0], ring_color[1], '\0'},
+    char strgroups[6][3] = {{color[0], color[1], '\0'},
+                            {color[2], color[3], '\0'},
+                            {color[4], color[5], '\0'},
+                            {ring_color[0], ring_color[1], '\0'},
                             {ring_color[2], ring_color[3], '\0'},
                             {ring_color[4], ring_color[5], '\0'}};
-    ring_colorf[0] = (float) strtol(strgroups[0], NULL, 16) / 255;
-    ring_colorf[1] = (float) strtol(strgroups[1], NULL, 16) / 255;
-    ring_colorf[2] = (float) strtol(strgroups[2], NULL, 16) / 255;
+
+    rgb16[0] = (float) strtol(strgroups[0], NULL, 16) / 255.0;
+    rgb16[1] = (float) strtol(strgroups[1], NULL, 16) / 255.0;
+    rgb16[2] = (float) strtol(strgroups[2], NULL, 16) / 255.0;
+                              
+    ring_colorf[0] = (float) strtol(strgroups[3], NULL, 16) / 255.0;
+    ring_colorf[1] = (float) strtol(strgroups[4], NULL, 16) / 255.0;
+    ring_colorf[2] = (float) strtol(strgroups[5], NULL, 16) / 255.0;
 
     double P = sqrt(ring_color[0] * .3 * 256 + ring_color[1] * .6 * 256 + ring_color[2] * .1 * 256) / 255;
 
@@ -149,13 +159,7 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
             cairo_pattern_destroy(pattern);
         }
     } else {
-        char strgroups[3][3] = {{color[0], color[1], '\0'},
-                                {color[2], color[3], '\0'},
-                                {color[4], color[5], '\0'}};
-        uint32_t rgb16[3] = {(strtol(strgroups[0], NULL, 16)),
-                             (strtol(strgroups[1], NULL, 16)),
-                             (strtol(strgroups[2], NULL, 16))};
-        cairo_set_source_rgba(xcb_ctx, rgb16[0] / 255.0, rgb16[1] / 255.0, rgb16[2] / 255.0, ring_alphaf);
+        cairo_set_source_rgba(xcb_ctx, rgb16[0], rgb16[1], rgb16[2], ring_alphaf);
         cairo_rectangle(xcb_ctx, 0, 0, resolution[0], resolution[1]);
         cairo_fill(xcb_ctx);
     }
