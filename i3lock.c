@@ -62,6 +62,13 @@ char color[7] = "ffffff";
 char ring_color[7] = "337d00";
 char ring_alpha[3] = "ff";
 uint32_t last_resolution[2];
+
+int indicator_x = 0;
+int indicator_y = 0;
+
+int indicator_rel_x = 0;
+int indicator_rel_y = 0;
+
 xcb_window_t win;
 static xcb_cursor_t cursor;
 #ifndef __OpenBSD__
@@ -885,6 +892,8 @@ int main(int argc, char *argv[]) {
         {"no-text", no_argument, NULL, 's'},
         {"ring_color", required_argument, NULL, 'r'},
         {"ring_alpha", required_argument, NULL, 'a'},
+        {"ring_pos", required_argument, NULL, 'P'},
+        {"ring_align", required_argument, NULL, 'A'},
         {"image", required_argument, NULL, 'i'},
         {"tiling", no_argument, NULL, 't'},
         {"ignore-empty-password", no_argument, NULL, 'e'},
@@ -897,7 +906,7 @@ int main(int argc, char *argv[]) {
     if ((username = pw->pw_name) == NULL)
         errx(EXIT_FAILURE, "pw->pw_name is NULL.\n");
 
-    char *optstring = "hvnbdc:p:ui:teI:fsr:a:";
+    char *optstring = "hvnbdc:p:ui:teI:fsr:a:P:A:";
     while ((o = getopt_long(argc, argv, optstring, longopts, &longoptind)) != -1) {
         switch (o) {
             case 'v':
@@ -949,6 +958,70 @@ int main(int argc, char *argv[]) {
             case 'u':
                 unlock_indicator = false;
                 break;
+            case 'P':
+                if (!strcmp(optarg, "c")) {
+                    indicator_x = 0;
+                    indicator_y = 0;
+                } else if (!strcmp(optarg, "n")) {
+                    indicator_x = 0;
+                    indicator_y = -1;
+                } else if (!strcmp(optarg, "e")) {
+                    indicator_x = 1;
+                    indicator_y = 0;
+                } else if (!strcmp(optarg, "s")) {
+                    indicator_x = 0;
+                    indicator_y = 1;
+                } else if (!strcmp(optarg, "w")) {
+                    indicator_x = -1;
+                    indicator_y = 0;
+                } else if (!strcmp(optarg, "ne")) {
+                    indicator_x = 1;
+                    indicator_y = -1;
+                } else if (!strcmp(optarg, "nw")) {
+                    indicator_x = -1;
+                    indicator_y = -1;
+                } else if (!strcmp(optarg, "se")) {
+                    indicator_x = 1;
+                    indicator_y = 1;
+                } else if (!strcmp(optarg, "sw")) {
+                    indicator_x = -1;
+                    indicator_y = 1;
+                } else {
+                    errx(EXIT_FAILURE, "i3lock: Invalid position value given. Expected on of 'c', 'n', 'e', 's', 'w', 'ne', 'se', 'sw', or 'nw'.\n");
+                }
+                break;
+            case 'A':
+                if (!strcmp(optarg, "c")) {
+                    indicator_rel_x = 0;
+                    indicator_rel_y = 0;
+                } else if (!strcmp(optarg, "n")) {
+                    indicator_rel_x = 0;
+                    indicator_rel_y = -1;
+                } else if (!strcmp(optarg, "e")) {
+                    indicator_rel_x = 1;
+                    indicator_rel_y = 0;
+                } else if (!strcmp(optarg, "s")) {
+                    indicator_rel_x = 0;
+                    indicator_rel_y = 1;
+                } else if (!strcmp(optarg, "w")) {
+                    indicator_rel_x = -1;
+                    indicator_rel_y = 0;
+                } else if (!strcmp(optarg, "ne")) {
+                    indicator_rel_x = 1;
+                    indicator_rel_y = -1;
+                } else if (!strcmp(optarg, "nw")) {
+                    indicator_rel_x = -1;
+                    indicator_rel_y = -1;
+                } else if (!strcmp(optarg, "se")) {
+                    indicator_rel_x = 1;
+                    indicator_rel_y = 1;
+                } else if (!strcmp(optarg, "sw")) {
+                    indicator_rel_x = -1;
+                    indicator_rel_y = 1;
+                } else {
+                    errx(EXIT_FAILURE, "i3lock: Invalid align value given. Expected on of 'c', 'n', 'e', 's', 'w', 'ne', 'se', 'sw', or 'nw'.\n");
+                }
+                break;
             case 's':
                 write_text = false;
                 break;
@@ -978,8 +1051,9 @@ int main(int argc, char *argv[]) {
                 show_failed_attempts = true;
                 break;
             default:
-                errx(EXIT_FAILURE, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-s] [-p win|default]"
-                                   " [-r color] [-a alpha] [-i image.png] [-t] [-e] [-I timeout] [-f]");
+                errx(EXIT_FAILURE, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-A align] [-s]"
+                                   " [-p win|default] [-r color] [-a alpha] [-i image.png] [-t] [-e]"
+                                   " [-I timeout] [-f]");
         }
     }
 

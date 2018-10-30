@@ -64,6 +64,12 @@ extern char ring_color[7];
 extern char ring_alpha[3];
 /* Whether to write text on the unlock indicator. */
 extern bool write_text;
+/* The x and y position of the unlock indicator. */
+extern int indicator_x;
+extern int indicator_y;
+/* The x and y alignment of the unlock indicator. */
+extern int indicator_rel_x;
+extern int indicator_rel_y;
 
 /* Whether the failed attempts should be displayed. */
 extern bool show_failed_attempts;
@@ -173,8 +179,8 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
     if (xr_screens > 0) {
         /* Composite the unlock indicator in the middle of each screen. */
         for (int screen = 0; screen < xr_screens; screen++) {
-            int x = (xr_resolutions[screen].x + ((xr_resolutions[screen].width / 2) - (button_diameter_physical / 2)));
-            int y = (xr_resolutions[screen].y + ((xr_resolutions[screen].height / 2) - (button_diameter_physical / 2)));
+            int x = (xr_resolutions[screen].x + ((xr_resolutions[screen].width * 0.5 * (indicator_x + 1)) - (button_diameter_physical * 0.5 * (indicator_rel_x + 1))));
+            int y = (xr_resolutions[screen].y + ((xr_resolutions[screen].height * 0.5 * (indicator_y + 1)) - (button_diameter_physical * 0.5 * (indicator_rel_y + 1))));
             cairo_set_source_surface(xcb_ctx, output, x, y);
             cairo_rectangle(xcb_ctx, x, y, button_diameter_physical, button_diameter_physical);
             cairo_fill(xcb_ctx);
