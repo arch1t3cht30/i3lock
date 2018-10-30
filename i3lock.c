@@ -60,6 +60,7 @@ static void input_done(void);
 
 char color[7] = "ffffff";
 char ring_color[7] = "337d00";
+char ring_alpha[3] = "ff";
 uint32_t last_resolution[2];
 xcb_window_t win;
 static xcb_cursor_t cursor;
@@ -883,6 +884,7 @@ int main(int argc, char *argv[]) {
         {"no-unlock-indicator", no_argument, NULL, 'u'},
         {"no-text", no_argument, NULL, 's'},
         {"ring_color", required_argument, NULL, 'r'},
+        {"ring_alpha", required_argument, NULL, 'a'},
         {"image", required_argument, NULL, 'i'},
         {"tiling", no_argument, NULL, 't'},
         {"ignore-empty-password", no_argument, NULL, 'e'},
@@ -895,7 +897,7 @@ int main(int argc, char *argv[]) {
     if ((username = pw->pw_name) == NULL)
         errx(EXIT_FAILURE, "pw->pw_name is NULL.\n");
 
-    char *optstring = "hvnbdc:p:ui:teI:fsr:";
+    char *optstring = "hvnbdc:p:ui:teI:fsr:a:";
     while ((o = getopt_long(argc, argv, optstring, longopts, &longoptind)) != -1) {
         switch (o) {
             case 'v':
@@ -936,6 +938,14 @@ int main(int argc, char *argv[]) {
 
                 break;
             }
+            case 'a': {
+                char *arg = optarg; 
+
+                if (strlen(arg) != 2 || sscanf(arg, "%02[0-9a-fA-F]", ring_alpha) != 1)
+                    errx(EXIT_FAILURE, "alpha is invalid, it must be given in hexadecimal byte-format: aa\n");
+
+                break;
+            }
             case 'u':
                 unlock_indicator = false;
                 break;
@@ -969,7 +979,7 @@ int main(int argc, char *argv[]) {
                 break;
             default:
                 errx(EXIT_FAILURE, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-s] [-p win|default]"
-                                   " [-r color] [-i image.png] [-t] [-e] [-I timeout] [-f]");
+                                   " [-r color] [-a alpha] [-i image.png] [-t] [-e] [-I timeout] [-f]");
         }
     }
 
