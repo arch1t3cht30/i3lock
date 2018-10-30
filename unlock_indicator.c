@@ -111,8 +111,6 @@ void init_colors(void) {
 
     double P = sqrt(ring_color[0] * .3 * 256 + ring_color[1] * .6 * 256 + ring_color[2] * .1 * 256) / 255;
 
-    printf("%f", P);
-
     type_colorf[0] = (P + (ring_colorf[0] - P) * 0.75) * 1.8;
     type_colorf[1] = (P + (ring_colorf[1] - P) * 0.75) * 1.8;
     type_colorf[2] = (P + (ring_colorf[2] - P) * 0.75) * 1.8;
