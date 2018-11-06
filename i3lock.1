@@ -70,6 +70,11 @@ show you the current PAM state (whether your password is currently being
 verified or whether it is wrong).
 
 .TP
+.B \-s, \-\-no-text
+Hide the status messages shown on the unlock indicator. Pressed modifier keys are
+still shown.
+
+.TP
 .BI \-i\  path \fR,\ \fB\-\-image= path
 Display the given PNG image instead of a blank screen.
 
@@ -77,6 +82,27 @@ Display the given PNG image instead of a blank screen.
 .BI \-c\  rrggbb \fR,\ \fB\-\-color= rrggbb
 Turn the screen into the given color instead of white. Color must be given in 3-byte
 format: rrggbb (i.e. ff0000 is red).
+
+.TP
+.BI \-r\  rrggbb \fR,\ \fB\-\-ring-color= rrggbb
+Give the unlock indicator ring (if enabled) the given color, instead of a light green.
+Color must be given in 3-byte format: rrggbb (i.e. ff0000 is red).
+
+.TP
+.BI \-a\  aa \fR,\ \fB\-\-ring-color= aa
+Give the transparency of the unlock indicator. Must be given in 1-byte hexadecimal
+format. Defaults to ff.
+
+.TP
+.BI \-P\  pos \fR,\ \fB\-\-ring-pos= pos
+Specify, where on the screen the unlock indicator will be placed, given as a direction.
+Possible values are c (default), n, ne, e, se, s, sw, w, nw.
+
+.TP
+.BI \-A\  align \fR,\ \fB\-\-ring-align= align
+Specify, how the unlock indicator will be aligned, given as a direction. Possible
+values are c (default), n, ne, e, se, s, sw, w, nw. For example, i3lock -P sw -A sw
+puts the unlock indicator in the lower left corner of the screen.
 
 .TP
 .B \-t, \-\-tiling
